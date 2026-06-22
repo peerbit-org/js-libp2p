@@ -106,6 +106,14 @@
     * @libp2p/interface-compliance-tests bumped from ^5.3.0 to ^5.3.1
     * @libp2p/peer-store bumped from ^10.0.9 to ^10.0.10
 
+## [16.3.4](https://github.com/libp2p/js-libp2p/compare/kad-dht-v16.3.3...kad-dht-v16.3.4) (2026-06-22)
+
+
+### Bug Fixes
+
+* **kad-dht:** only keep peers that responded in getClosestPeers ([#3537](https://github.com/libp2p/js-libp2p/issues/3537)) ([47a51e3](https://github.com/libp2p/js-libp2p/commit/47a51e3d1e0c508461b4bca1825b42e7397b9e7c))
+* **kad-dht:** run the periodic routing table refresh ([#3538](https://github.com/libp2p/js-libp2p/issues/3538)) ([d4dad9b](https://github.com/libp2p/js-libp2p/commit/d4dad9bf53f6e50012499837fb6db213d2022efd))
+
 ## [16.3.3](https://github.com/libp2p/js-libp2p/compare/kad-dht-v16.3.2...kad-dht-v16.3.3) (2026-06-13)
 
 
