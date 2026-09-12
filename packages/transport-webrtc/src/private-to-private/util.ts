@@ -1,10 +1,11 @@
 import { ConnectionFailedError, InvalidMessageError, InvalidMultiaddrError } from '@libp2p/interface'
 import { peerIdFromString } from '@libp2p/peer-id'
 import { CustomProgressEvent } from 'progress-events'
-import { RTCIceCandidate } from '../webrtc/index.js'
+import { raceSignal } from 'race-signal'
+import { RTCIceCandidate } from '../webrtc/index.ts'
 import { Message } from './pb/message.ts'
 import type { WebRTCDialEvents } from './transport.ts'
-import type { RTCPeerConnection } from '../webrtc/index.js'
+import type { RTCPeerConnection } from '../webrtc/index.ts'
 import type { AbortOptions, LoggerOptions, PeerId, Stream } from '@libp2p/interface'
 import type { Multiaddr } from '@multiformats/multiaddr'
 import type { MessageStream } from 'it-protobuf-stream'
@@ -71,12 +72,13 @@ export const readCandidatesUntilConnected = async (pc: RTCPeerConnection, stream
     // If the peer connection is not connected, the error may still be
     // recoverable — the signaling stream can close just before the
     // connectionstatechange event fires. Wait for the connected promise to
-    // settle: if the PC connects we can ignore the stream error; if it fails
-    // or was never going to connect, re-throw.
+    // settle, bounded by the dial signal: if the PC connects we can ignore the
+    // stream error; if it fails or the dial is cancelled, re-throw.
     if (pc.connectionState !== 'connected') {
       try {
-        await connectedPromise.promise
+        await raceSignal(connectedPromise.promise, options.signal)
       } catch {
+        options.signal?.throwIfAborted()
         throw err
       }
     }
